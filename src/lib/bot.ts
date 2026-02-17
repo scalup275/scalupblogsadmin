@@ -38,7 +38,7 @@ export async function getBlogBySlug(slug: string) {
   return handleResponse(res);
 }
 
-/* ---------------- BLOG ADMIN (PROTECTED) ---------------- */
+/*BLOG ADMIN (PROTECTED) */
 
 export async function createBlog(data: BlogPayload) {
   const res = await fetch(`${API_BASE_URL}/api/blogs`, {
@@ -112,6 +112,14 @@ export async function signupAdmin(email: string, password: string) {
     credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
+  });
+
+  return handleResponse(res);
+}
+export async function toggleBlogPublish(id: string) {
+  const res = await fetch(`${API_BASE_URL}/api/blogs/${id}/toggle-publish`, {
+    method: "PATCH",
+    credentials: "include",
   });
 
   return handleResponse(res);

@@ -27,9 +27,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Pencil, Trash2, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, EyeOff, Globe } from "lucide-react";
 import { toast } from "sonner";
-import { getAllBlogs, createBlog, updateBlog, deleteBlog } from "@/lib/bot";
+import {
+  getAllBlogs,
+  createBlog,
+  updateBlog,
+  deleteBlog,
+  toggleBlogPublish,
+} from "@/lib/bot";
 
 interface Blog {
   _id: string;
@@ -48,7 +54,7 @@ interface FormData {
   isPublished: boolean;
 }
 
-// ✅ MOVED OUTSIDE — this is the fix, BlogForm no longer remounts on every render
+//  MOVED OUTSIDE — this is the fix, BlogForm no longer remounts on every render
 const BlogForm = memo(
   ({
     formData,
@@ -184,7 +190,14 @@ export default function Blogs() {
       toast.error(err.message);
     }
   };
-
+  const handleTogglePublish = async (id: string) => {
+    try {
+      await toggleBlogPublish(id);
+      fetchBlogs();
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  };
   return (
     <AdminLayout title="Blogs" subtitle="Manage your blog posts">
       <div className="space-y-6">
@@ -241,11 +254,17 @@ export default function Blogs() {
                     <TableRow key={blog._id}>
                       <TableCell>{blog.title}</TableCell>
                       <TableCell>
-                        <Badge
-                          variant={blog.isPublished ? "default" : "secondary"}
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => handleTogglePublish(blog._id)}
                         >
-                          {blog.isPublished ? "published" : "draft"}
-                        </Badge>
+                          {blog.isPublished ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Globe className="h-4 w-4" />
+                          )}
+                        </Button>
                       </TableCell>
                       <TableCell>
                         {new Date(blog.createdAt).toLocaleDateString()}
