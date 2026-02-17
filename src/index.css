@@ -1,0 +1,228 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* SCALUP Design System - Orange/Black Brand Theme */
+
+@layer base {
+  :root {
+    /* Core brand colors from SCALUP logo */
+    --background: 0 0% 99%;
+    --foreground: 0 0% 8%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 8%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 8%;
+
+    /* Primary - SCALUP Orange */
+    --primary: 28 95% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary - Dark/Black */
+    --secondary: 0 0% 8%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 30 10% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    /* Accent - Light orange tint */
+    --accent: 28 90% 95%;
+    --accent-foreground: 28 95% 35%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 15% 90%;
+    --input: 30 15% 90%;
+    --ring: 28 95% 55%;
+
+    --radius: 0.75rem;
+
+    /* Extended SCALUP palette */
+    --scalup-orange: 28 95% 55%;
+    --scalup-orange-light: 28 90% 65%;
+    --scalup-orange-dark: 28 95% 45%;
+    --scalup-black: 0 0% 8%;
+    --scalup-gray: 0 0% 45%;
+    --scalup-light: 30 10% 97%;
+    
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(28 95% 55%) 0%, hsl(35 95% 60%) 100%);
+    --gradient-dark: linear-gradient(135deg, hsl(0 0% 8%) 0%, hsl(0 0% 15%) 100%);
+    --gradient-light: linear-gradient(180deg, hsl(30 10% 98%) 0%, hsl(0 0% 100%) 100%);
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --shadow-orange: 0 10px 40px -10px hsl(28 95% 55% / 0.4);
+    --shadow-dark: 0 10px 40px -10px hsl(0 0% 0% / 0.3);
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 8%;
+    --sidebar-primary: 28 95% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 28 90% 95%;
+    --sidebar-accent-foreground: 28 95% 35%;
+    --sidebar-border: 30 15% 90%;
+    --sidebar-ring: 28 95% 55%;
+
+    /* Chart colors */
+    --chart-1: 28 95% 55%;
+    --chart-2: 28 90% 65%;
+    --chart-3: 0 0% 25%;
+    --chart-4: 30 10% 70%;
+    --chart-5: 28 95% 45%;
+  }
+
+  .dark {
+    --background: 0 0% 6%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 28 95% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 20%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+
+    --accent: 28 90% 15%;
+    --accent-foreground: 28 90% 70%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 28 95% 55%;
+
+    --sidebar-background: 0 0% 8%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 28 95% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 0 0% 18%;
+    --sidebar-ring: 28 95% 55%;
+
+    --chart-1: 28 95% 55%;
+    --chart-2: 28 90% 65%;
+    --chart-3: 0 0% 60%;
+    --chart-4: 30 10% 50%;
+    --chart-5: 28 95% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight;
+  }
+}
+
+@layer utilities {
+  /* Gradient backgrounds */
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+  }
+  
+  .bg-gradient-dark {
+    background: var(--gradient-dark);
+  }
+
+  .bg-gradient-light {
+    background: var(--gradient-light);
+  }
+
+  /* Text gradients */
+  .text-gradient-hero {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-hero);
+  }
+
+  /* Shadows */
+  .shadow-orange {
+    box-shadow: var(--shadow-orange);
+  }
+
+  .shadow-dark {
+    box-shadow: var(--shadow-dark);
+  }
+
+  /* Animations */
+  .animate-fade-up {
+    animation: fadeUp 0.6s ease-out forwards;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out forwards;
+  }
+
+  /* Hover effects */
+  .hover-lift {
+    @apply transition-all duration-300;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .hover-glow:hover {
+    box-shadow: var(--shadow-orange);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
