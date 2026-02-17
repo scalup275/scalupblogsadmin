@@ -106,7 +106,6 @@ const BlogForm = memo(
     </div>
   ),
 );
-
 export default function Blogs() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
