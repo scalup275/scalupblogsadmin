@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo, useCallback } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,9 +27,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Pencil, Trash2, Eye, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { toast } from "sonner";
-
 import { getAllBlogs, createBlog, updateBlog, deleteBlog } from "@/lib/bot";
 
 interface Blog {
@@ -42,16 +41,74 @@ interface Blog {
   createdAt: string;
 }
 
+interface FormData {
+  title: string;
+  excerpt: string;
+  content: string;
+  isPublished: boolean;
+}
+
+// ✅ MOVED OUTSIDE — this is the fix, BlogForm no longer remounts on every render
+const BlogForm = memo(
+  ({
+    formData,
+    setFormData,
+    onSubmit,
+    submitLabel,
+  }: {
+    formData: FormData;
+    setFormData: (updater: (prev: FormData) => FormData) => void;
+    onSubmit: () => void;
+    submitLabel: string;
+  }) => (
+    <div className="space-y-4">
+      <Input
+        placeholder="Title"
+        value={formData.title}
+        onChange={(e) =>
+          setFormData((prev) => ({ ...prev, title: e.target.value }))
+        }
+      />
+      <Input
+        placeholder="Excerpt"
+        value={formData.excerpt}
+        onChange={(e) =>
+          setFormData((prev) => ({ ...prev, excerpt: e.target.value }))
+        }
+      />
+      <RichTextEditor
+        value={formData.content}
+        onChange={(html) => setFormData((prev) => ({ ...prev, content: html }))}
+      />
+      <Select
+        value={formData.isPublished ? "published" : "draft"}
+        onValueChange={(v) =>
+          setFormData((prev) => ({ ...prev, isPublished: v === "published" }))
+        }
+      >
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="draft">Draft</SelectItem>
+          <SelectItem value="published">Published</SelectItem>
+        </SelectContent>
+      </Select>
+      <Button onClick={onSubmit} className="w-full">
+        {submitLabel}
+      </Button>
+    </div>
+  ),
+);
+
 export default function Blogs() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     title: "",
     excerpt: "",
     content: "",
@@ -64,7 +121,6 @@ export default function Blogs() {
       const data = await getAllBlogs();
       setBlogs(data);
     } catch (err) {
-      console.error(err);
       toast.error("Failed to load blogs");
     } finally {
       setLoading(false);
@@ -84,7 +140,6 @@ export default function Blogs() {
       toast.error("Please fill in all fields");
       return;
     }
-
     try {
       await createBlog(formData);
       toast.success("Blog created successfully");
@@ -109,7 +164,6 @@ export default function Blogs() {
 
   const handleUpdate = async () => {
     if (!editingBlog) return;
-
     try {
       await updateBlog(editingBlog._id, formData);
       toast.success("Blog updated successfully");
@@ -121,8 +175,6 @@ export default function Blogs() {
     }
   };
 
-  /* ================= DELETE ================= */
-
   const handleDelete = async (id: string) => {
     try {
       await deleteBlog(id);
@@ -133,55 +185,9 @@ export default function Blogs() {
     }
   };
 
-  const BlogForm = ({
-    onSubmit,
-    submitLabel,
-  }: {
-    onSubmit: () => void;
-    submitLabel: string;
-  }) => (
-    <div className="space-y-4">
-      <Input
-        placeholder="Title"
-        value={formData.title}
-        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-      />
-
-      <Input
-        placeholder="Excerpt"
-        value={formData.excerpt}
-        onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-      />
-      <RichTextEditor
-        value={formData.content}
-        onChange={(html) => setFormData({ ...formData, content: html })}
-      />
-
-      <Select
-        value={formData.isPublished ? "published" : "draft"}
-        onValueChange={(v) =>
-          setFormData({ ...formData, isPublished: v === "published" })
-        }
-      >
-        <SelectTrigger>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="draft">Draft</SelectItem>
-          <SelectItem value="published">Published</SelectItem>
-        </SelectContent>
-      </Select>
-
-      <Button onClick={onSubmit} className="w-full">
-        {submitLabel}
-      </Button>
-    </div>
-  );
-
   return (
     <AdminLayout title="Blogs" subtitle="Manage your blog posts">
       <div className="space-y-6">
-        {/* Search + Create */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -203,12 +209,16 @@ export default function Blogs() {
               <DialogHeader>
                 <DialogTitle>Create Blog</DialogTitle>
               </DialogHeader>
-              <BlogForm onSubmit={handleCreate} submitLabel="Create" />
+              <BlogForm
+                formData={formData}
+                setFormData={setFormData}
+                onSubmit={handleCreate}
+                submitLabel="Create"
+              />
             </DialogContent>
           </Dialog>
         </div>
 
-        {/* Table */}
         <Card>
           <CardHeader>
             <CardTitle>All Blogs ({filteredBlogs.length})</CardTitle>
@@ -230,7 +240,6 @@ export default function Blogs() {
                   {filteredBlogs.map((blog) => (
                     <TableRow key={blog._id}>
                       <TableCell>{blog.title}</TableCell>
-
                       <TableCell>
                         <Badge
                           variant={blog.isPublished ? "default" : "secondary"}
@@ -238,11 +247,9 @@ export default function Blogs() {
                           {blog.isPublished ? "published" : "draft"}
                         </Badge>
                       </TableCell>
-
                       <TableCell>
                         {new Date(blog.createdAt).toLocaleDateString()}
                       </TableCell>
-
                       <TableCell className="text-right space-x-2">
                         <Button
                           size="icon"
@@ -267,13 +274,17 @@ export default function Blogs() {
           </CardContent>
         </Card>
 
-        {/* Edit Dialog */}
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Edit Blog</DialogTitle>
             </DialogHeader>
-            <BlogForm onSubmit={handleUpdate} submitLabel="Update" />
+            <BlogForm
+              formData={formData}
+              setFormData={setFormData}
+              onSubmit={handleUpdate}
+              submitLabel="Update"
+            />
           </DialogContent>
         </Dialog>
       </div>
