@@ -1,10 +1,9 @@
-import { useEffect, useState, memo, useCallback } from "react";
+import { useEffect, useState, memo } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import RichTextEditor from "@/components/editor/RichTextEditor";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -54,7 +53,6 @@ interface FormData {
   isPublished: boolean;
 }
 
-//  MOVED OUTSIDE — this is the fix, BlogForm no longer remounts on every render
 const BlogForm = memo(
   ({
     formData,
@@ -106,6 +104,7 @@ const BlogForm = memo(
     </div>
   ),
 );
+
 export default function Blogs() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
@@ -189,6 +188,7 @@ export default function Blogs() {
       toast.error(err.message);
     }
   };
+
   const handleTogglePublish = async (id: string) => {
     try {
       await toggleBlogPublish(id);
@@ -197,6 +197,7 @@ export default function Blogs() {
       toast.error(err.message);
     }
   };
+
   return (
     <AdminLayout title="Blogs" subtitle="Manage your blog posts">
       <div className="space-y-6">
@@ -217,7 +218,8 @@ export default function Blogs() {
                 <Plus className="h-4 w-4" /> New Blog
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            {/* ✅ FIXED: scrollable */}
+            <DialogContent className="overflow-y-auto max-h-[90vh]">
               <DialogHeader>
                 <DialogTitle>Create Blog</DialogTitle>
               </DialogHeader>
@@ -292,8 +294,9 @@ export default function Blogs() {
           </CardContent>
         </Card>
 
+        {/* ✅ FIXED: scrollable */}
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          <DialogContent>
+          <DialogContent className="overflow-y-auto max-h-[90vh]">
             <DialogHeader>
               <DialogTitle>Edit Blog</DialogTitle>
             </DialogHeader>
